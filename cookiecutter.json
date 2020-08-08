@@ -1,0 +1,12 @@
+{
+  "full_name": "Target ID",
+  "email": "targetid@benevolent.ai",
+  "project_name": "BAI",
+  "app_name": "{{cookiecutter.project_name.lower().replace('-', '_').replace(' ', '_')}}",
+  "version": "0.0.1",
+  "api": ["flask", "fastAPI"],
+  "sqlalchemy": "y",
+  "project_short_description": "A api project.",
+  "python_version": ["3.8", "3.7", "3.6"],
+  "namespace": "baiflow"
+}

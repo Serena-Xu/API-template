@@ -1,0 +1,10 @@
+{%- if cookiecutter.sqlalchemy|lower == 'y' %}
+local:
+  host: http://0.0.0.0:8080
+  mysql:
+    host: 127.0.0.1
+    port: 3306
+    dbname: {{cookiecutter.app_name}}
+    user: {{cookiecutter.app_name}}
+    password: {{cookiecutter.app_name}}
+{%- endif %}

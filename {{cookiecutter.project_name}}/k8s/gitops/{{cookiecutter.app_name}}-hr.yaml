@@ -1,0 +1,45 @@
+---
+apiVersion: helm.fluxcd.io/v1
+kind: HelmRelease
+metadata:
+  name: {{cookiecutter.app_name}}-api
+  namespace: &namespace {{cookiecutter.namespace}}
+  annotations:
+    flux.weave.works/automated: "false"
+spec:
+  releaseName: {{cookiecutter.app_name}}-api
+  chart:
+    repository: https://chartmuseum.stbl.svc.int.beno.ai
+    name: api
+    version: 1.1.9
+  values:
+    imagePullSecrets:
+    - name: gitlab-registry-secret-ai
+    api:
+      metadata:
+        name: {{cookiecutter.app_name}}-api
+      fullnameOverride: api
+      nameOverride: api
+      replicaCount: 1
+      resources:
+        requests:
+          cpu: 1
+          memory: 512Mi
+        limits:
+          cpu: 1
+          memory: 1Gi
+      containers:
+        pullPolicy: Always
+        image: gitlab.beno.ai:4567/ai/hypgen/baiflow/flask-test
+        imageTag: latest
+      service:
+        type: "ClusterIP"
+        targetPort: 8080
+        port: 80
+        portname: http
+      ingress:
+        annotations:
+          kubernetes.io/ingress.class: nginx
+          external-dns.alpha.kubernetes.io/hostname: <TO_BE_REPLACE>
+        hosts:
+          - host: <TO_BE_REPLACE>

@@ -1,0 +1,88 @@
+stages:
+  - build
+  - test
+  - deploy
+
+variables:
+  DOCKER_VERSION: 19.03.8
+  CI_TOOL_VERSION: 0.0.4
+
+default:
+  before_script: # global functions
+    - |
+      build_docker_image() {
+              cd $CONTEXT
+              docker login -u "gitlab-ci-token" -p "$CI_JOB_TOKEN" $CI_REGISTRY
+              echo $CI_REGISTRY_IMAGE/$IMAGE_NAME:$IMAGE_TAG
+              docker build . -f docker/$DOCKERFILE \
+                -t $CI_REGISTRY_IMAGE/$IMAGE_NAME:$IMAGE_TAG
+
+              docker push $CI_REGISTRY_IMAGE/$IMAGENAME:$IMAGE_TAG
+            }
+    - |
+      fetch_gitops_repo()
+      {
+        # login
+        git config --global user.email "<TO_BE_REPLACE>"
+        git config --global user.name "<TO_BE_REPLACE>"
+        git clone https://$AUTOMATION_USER:$AUTOMATION_PASSWORD@gitlab.beno.ai/core-eng/gitops/targetid.git
+      }
+    - |
+      push_to_gitops_repo()
+            {
+              FILE_PATH=$1
+              CLUSTER=$2
+              NAMESPACE=$3
+
+              GITOPS_REPO=targetid
+
+              GITOPS_PATH=${CLUSTER}/${NAMESPACE}/$(basename -- $FILE_PATH)
+              cp $FILE_PATH ${GITOPS_REPO}/${GITOPS_PATH}
+
+              cd $GITOPS_REPO
+              git add $GITOPS_PATH
+              git status
+              git commit $DST_PATH -m "Autocommit from {{cookiecutter.app_name}} job ${CI_JOB_ID} on commit ${CI_COMMIT_SHORT_SHA}"
+              git status
+              git pull --rebase
+              git push
+            }
+
+
+##################################### BUILD #######################################
+
+build-{{cookiecutter.app_name}}:
+  variables:
+    CONTEXT: {{cookiecutter.project_name}}
+    IMAGE_NAME: {{cookiecutter.app_name}}
+    DOCKERFILE: "Dockerfile"
+    IMAGE_TAG: latest
+  image: docker:${DOCKER_VERSION}
+  stage: build
+  script:
+    - build_docker_image
+
+
+##################################### test #######################################
+
+unit-tests:
+  variables:
+    CONTEXT: {{cookiecutter.project_name}}
+    IMAGE_NAME: {{cookiecutter.app_name}}
+    IMAGE_TAG: latest
+  image: $CI_REGISTRY_IMAGE/$IMAGE_NAME:$IMAGE_TAG
+  stage: test
+  script:
+    - cd $CONTEXT
+    - pytest tests
+
+
+##################################### DEPLOY #######################################
+
+{{cookiecutter.app_name}}-deploy:
+  image: "$CI_REGISTRY_IMAGE/ci-tool:${CI_TOOL_VERSION}"
+  stage: deploy
+  script:
+    - fetch_gitops_repo
+    - push_to_gitops_repo k8s/gitops/{{cookiecutter.app_name}}-hr.yaml ${GITOPS_CLUSTER} {{cookiecutter.namespace}} # need to export GITOPS_CLUSTER
+
