@@ -49,16 +49,6 @@ You will see {{app_name}}/db if you choose sqlalchemy is True.
 ### deployment
 We use helm chart to deploy {{app_name}} api. For more info about helm chart, please refer to : https://helm.sh/docs/
 
-In deployment, it uses api chart (version: 1.1.9) lives in https://chartmuseum.stbl.svc.int.beno.ai. It contains 1 deployment, 1 service and 1 ingress. 
-
-Project contains a .gitlab-ci.yaml would you deploy {{app_name}} api into gitops cluster.
-
-
-***Note*** : 
-- Make sure you update `image` and `imageTag` in `k8s/gitops/{{cookiecutter.app_name}}-hr.yaml` file
-- Update git user email and git name in `fetch_gitops_repo` in `.gitlab-ci.yaml`
-- Update api host name `external-dns.alpha.kubernetes.io/hostname` and `hosts` to your host in {{cookiecutter.app_name}}-hr.yaml,
-
 
 ### Maintenance
 Email serena.xu@benevolent.ai for questions; open issues, pull requests and modifications as necessary.
