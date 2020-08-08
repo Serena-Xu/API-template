@@ -61,4 +61,4 @@ Project contains a .gitlab-ci.yaml would you deploy {{app_name}} api into gitops
 
 
 ### Maintenance
-Email serena.xu@benevolent.ai or slack Serena Xu for questions; open issues, merge requests and modifications as necessary.
+Email serena.xu@benevolent.ai for questions; open issues, pull requests and modifications as necessary.
