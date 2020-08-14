@@ -50,5 +50,18 @@ You will see {{app_name}}/db if you choose sqlalchemy is True.
 We use helm chart to deploy {{app_name}} api. For more info about helm chart, please refer to : https://helm.sh/docs/
 
 
+#
+####Use pre-commit to manage and maintain multi-language pre-commit hooks
+
+One-time install::
+ 1. `pip install pre-commit` or `brew install pre-commit`
+ 2. A pre-commit configuration file `.pre-commit-config.yaml` has been added to your repo 
+ 3. Install the git hook scripts `pre-commit install`
+ 4. You finish all the installation. You can use pre-commit now by `pre-commit run --all-files`
+ 
+ For more details on pre-commit, see https://pre-commit.com/
+
+
+#
 ### Maintenance
 Email serena.xu@benevolent.ai for questions; open issues, pull requests and modifications as necessary.
